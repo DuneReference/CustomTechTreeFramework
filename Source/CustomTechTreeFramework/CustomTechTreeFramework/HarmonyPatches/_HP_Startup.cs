@@ -10,7 +10,7 @@ namespace DuneRef_CustomTechTreeFramework
 
         static HarmonyPatches()
         {
-            Harm = new Harmony("rimworld.mod.duneref.rimcivtechtree");
+            Harm = new Harmony("rimworld.mod.duneref.customtechtreeframework");
 
             if (ModLister.HasActiveModWithName("ResearchPal - Forked"))
             {

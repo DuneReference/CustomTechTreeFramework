@@ -10,7 +10,7 @@ namespace DuneRef_CustomTechTreeFramework
         {
         }
 
-        [DebugAction("Research", null, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        [DebugAction("CustomTechTreeFramework", null, allowedGameStates = AllowedGameStates.PlayingOnMap)]
         public static void FinishCurrentResearch()
         {
             if (Find.ResearchManager.currentProj != null)
