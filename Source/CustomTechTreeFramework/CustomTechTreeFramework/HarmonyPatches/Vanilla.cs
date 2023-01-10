@@ -11,6 +11,7 @@ namespace DuneRef_CustomTechTreeFramework
     {
         public static readonly Type patchType = typeof(VanillaPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
+        public static bool costFactorPatched = false;
 
         public static void ExclusivePatches()
         {
@@ -25,9 +26,31 @@ namespace DuneRef_CustomTechTreeFramework
 
             // Hide projects that I designate for hiding.
             Harm.Patch(AccessTools.Method(typeof(MainTabWindow_Research), nameof(MainTabWindow_Research.PostOpen)), postfix: new HarmonyMethod(patchType, nameof(PostOpenPostfix)));
+        }
 
-            // Remove CostFactor adjustments
+        public static void CostFactorPatch()
+        {
+            // Remove CostFactor adjustments 
             Harm.Patch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), postfix: new HarmonyMethod(patchType, nameof(CostFactorPostfix)));
+            costFactorPatched = true;
+        }
+
+        public static void CostFactorUnpatch()
+        {
+            Harm.Unpatch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), AccessTools.Method(patchType, nameof(CostFactorPostfix)));
+            costFactorPatched = false;
+        }
+
+        public static void UpdateCostFactorPatch()
+        {
+            if (costFactorPatched && !CustomTechTreeFrameworkSettings.removeCostFactor)
+            {
+                CostFactorUnpatch();
+            }
+            else if (!costFactorPatched && CustomTechTreeFrameworkSettings.removeCostFactor)
+            {
+                CostFactorPatch();
+            }
         }
 
         public static bool UnlockedDefsPrefix(ref List<Def> __result, ResearchProjectDef __instance)

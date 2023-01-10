@@ -30,6 +30,11 @@ namespace DuneRef_CustomTechTreeFramework
                 SemiRandomResearchPatches.Patches();
             }
 
+            if (CustomTechTreeFrameworkSettings.removeCostFactor)
+            {
+                VanillaPatches.CostFactorPatch();
+            }
+
             VanillaPatches.Patches();
         }
     }
