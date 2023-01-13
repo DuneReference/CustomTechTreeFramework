@@ -10,17 +10,18 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CustomTechTreeFramework</RootNamespace>
     <AssemblyName>CustomTechTreeFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Assemblies\</OutputPath>
+    <OutputPath>..\..\..\1.4\Assemblies\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\2009463077\Current\Assemblies\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
@@ -43,15 +44,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="CM_Semi_Random_Research">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2375902187\1.3\Assemblies\CM_Semi_Random_Research.dll</HintPath>
+      <HintPath>..\..\..\..\2879094186\1.4\Assemblies\CM_Semi_Random_Research.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DubsMintMenus">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\1446523594\1.3\Assemblies\DubsMintMenus.dll</HintPath>
+      <HintPath>..\..\..\..\1446523594\1.4\Assemblies\DubsMintMenus.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ResearchTree">
-      <HintPath>..\..\..\..\..\..\..\workshop\content\294100\2351393394\1.3\Assemblies\ResearchTree.dll</HintPath>
+    <Reference Include="ResearchPowl">
+      <HintPath>..\..\..\..\2877856030\1.4\Assemblies\ResearchPowl.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -75,7 +76,7 @@
     <Compile Include="Debug.cs" />
     <Compile Include="CustomTechTreeFramework_DefOf.cs" />
     <Compile Include="HarmonyPatches\DubsMintMenus.cs" />
-    <Compile Include="HarmonyPatches\ResearchPalForked.cs" />
+    <Compile Include="HarmonyPatches\ResearchPowl.cs" />
     <Compile Include="HarmonyPatches\SemiRandomResearch.cs" />
     <Compile Include="HarmonyPatches\Vanilla.cs" />
     <Compile Include="HarmonyPatches\Common.cs" />
@@ -90,6 +91,7 @@
     <None Include="packages.config" />
     <PackageReference Include="Krafs.Publicizer" Version="1.0.2" />
     <Publicize Include="Assembly-CSharp" />
+    <Publicize Include="ResearchPowl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -4,7 +4,6 @@ using Verse;
 using HarmonyLib;
 using System.Linq;
 using System.Collections.Generic;
-using DubsMintMenus;
 
 namespace DuneRef_CustomTechTreeFramework
 {
@@ -23,7 +22,7 @@ namespace DuneRef_CustomTechTreeFramework
                 foreach (ResearchProjectDef unlock in proj.GetModExtension<ResearchUnlocks>().researchUnlocks)
                 {
                     List<ResearchProjectDef> researchDefs = DefDatabase<ResearchProjectDef>.AllDefsListForReading
-                                                            .Where(x => x.tab != RimCivTechTree_DefOf.DuneRef_Hidden)
+                                                            .Where(x => x.tab != CustomTechTreeFramework_DefOf.DuneRef_Hidden)
                                                             .ToList();
 
                     bool notFinished = false;

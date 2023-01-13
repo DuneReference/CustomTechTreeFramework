@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+    <ResearchTabDef>
+        <defName>DuneRef_Hidden</defName>
+        <label>Hidden (Don't Research These)</label>
+        <modExtensions>
+            <li Class="DuneRef_CustomTechTreeFramework.HiddenTab">
+                <hidden>True</hidden>
+            </li>
+        </modExtensions>
+    </ResearchTabDef>
+    
+</Defs>

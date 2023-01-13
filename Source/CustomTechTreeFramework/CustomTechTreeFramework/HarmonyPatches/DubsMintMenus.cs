@@ -44,7 +44,7 @@ namespace DuneRef_CustomTechTreeFramework
 
         public static bool AllProjectsForTabPrefix(ref List<ResearchProjectDef> __result, ResearchTabDef tab)
         {
-            if (tab == RimCivTechTree_DefOf.DuneRef_Hidden)
+            if (tab == CustomTechTreeFramework_DefOf.DuneRef_Hidden)
             {
                 __result = new List<ResearchProjectDef>();
                 return false;
@@ -128,7 +128,7 @@ namespace DuneRef_CustomTechTreeFramework
             MethodInfo Parc = AccessTools.Method(__instance.GetType(), "parc");
 
             __result = DefDatabase<ResearchProjectDef>.AllDefsListForReading
-                .Where(x => x.tab != RimCivTechTree_DefOf.DuneRef_Hidden)
+                .Where(x => x.tab != CustomTechTreeFramework_DefOf.DuneRef_Hidden)
                 .Where(x => (bool)Parc.Invoke(__instance, new Object[] { x })).ToList();
             return false;
         }

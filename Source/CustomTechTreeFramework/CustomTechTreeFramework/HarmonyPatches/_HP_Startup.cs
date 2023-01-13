@@ -12,11 +12,12 @@ namespace DuneRef_CustomTechTreeFramework
         {
             Harm = new Harmony("rimworld.mod.duneref.customtechtreeframework");
 
-            if (ModLister.HasActiveModWithName("ResearchPal - Forked"))
+            if (ModLister.HasActiveModWithName("ResearchPowl"))
             {
-                ResearchPalForkedPatches.Patches();
+                ResearchPowlPatches.Patches();
             }
-            else if (ModLister.HasActiveModWithName("Dubs Mint Menus"))
+            else 
+            if (ModLister.HasActiveModWithName("Dubs Mint Menus"))
             {
                 DubsMintMenusPatches.Patches();
             }
@@ -25,7 +26,7 @@ namespace DuneRef_CustomTechTreeFramework
                 VanillaPatches.ExclusivePatches();
             }
 
-            if (ModLister.HasActiveModWithName("Semi Random Research"))
+            if (ModLister.HasActiveModWithName("Semi Random Research (Unofficial)"))
             {
                 SemiRandomResearchPatches.Patches();
             }
