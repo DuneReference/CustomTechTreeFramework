@@ -1,6 +1,7 @@
 ﻿using Verse;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace DuneRef_CustomTechTreeFramework
 {
@@ -12,21 +13,30 @@ namespace DuneRef_CustomTechTreeFramework
             return DefDatabase<RecipeDef>.AllDefs.Where(x =>
             {
                 bool found = false;
+                bool CEexit = false;
 
-                if (proj.GetModExtension<ResearchUnlocks>() != null)
+                if (Startup.usingCE && CustomTechTreeFrameworkSettings.removeCEAmmo && x.conceptLearned == CustomTechTreeFramework_DefOf.CE_AmmoCrafting)
                 {
-                    found = x.researchPrerequisite == proj ||
-                           (x.researchPrerequisites != null &&
-                            x.researchPrerequisites.Contains(proj));
+                    CEexit = true;
+                }
 
-                    if (!found)
+                if (!CEexit)
+                {
+                    if (proj.GetModExtension<ResearchUnlocks>() != null)
                     {
-                        foreach (ResearchProjectDef unlock in proj.GetModExtension<ResearchUnlocks>().researchUnlocks)
+                        found = x.researchPrerequisite == proj ||
+                               (x.researchPrerequisites != null &&
+                                x.researchPrerequisites.Contains(proj));
+
+                        if (!found)
                         {
-                            found = x.researchPrerequisite == unlock ||
-                                   (x.researchPrerequisites != null &&
-                                    x.researchPrerequisites.Contains(unlock));
-                            if (found) break;
+                            foreach (ResearchProjectDef unlock in proj.GetModExtension<ResearchUnlocks>().researchUnlocks)
+                            {
+                                found = x.researchPrerequisite == unlock ||
+                                       (x.researchPrerequisites != null &&
+                                        x.researchPrerequisites.Contains(unlock));
+                                if (found) break;
+                            }
                         }
                     }
                 }
