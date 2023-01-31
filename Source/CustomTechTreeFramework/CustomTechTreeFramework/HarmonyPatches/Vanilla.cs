@@ -26,6 +26,9 @@ namespace DuneRef_CustomTechTreeFramework
 
             // Hide projects that I designate for hiding.
             Harm.Patch(AccessTools.Method(typeof(MainTabWindow_Research), nameof(MainTabWindow_Research.PostOpen)), postfix: new HarmonyMethod(patchType, nameof(PostOpenPostfix)));
+
+            // Add functionality for OR Prerequisites
+            Harm.Patch(AccessTools.PropertyGetter(typeof(ResearchProjectDef), nameof(ResearchProjectDef.PrerequisitesCompleted)), postfix: new HarmonyMethod(patchType, nameof(AddOrPrerequisites)));
         }
 
         public static void CostFactorPatch()
@@ -81,6 +84,55 @@ namespace DuneRef_CustomTechTreeFramework
         public static void CostFactorPostfix(ref float __result)
         {
             __result = 1f;
+        }
+
+        public static void AddOrPrerequisites(ref bool __result, ResearchProjectDef __instance)
+        {
+            if (__result)
+            {
+                OrPrerequisites orPrerequisitesModExtension = __instance.GetModExtension<OrPrerequisites>();
+                List<ResearchProjectDef> orPrerequisites = orPrerequisitesModExtension?.orPrerequisites;
+                List<ResearchProjectDef> orHiddenPrerequisites = orPrerequisitesModExtension?.orHiddenPrerequisites;
+
+                if (orPrerequisites != null && orPrerequisites.Count > 0)
+                {
+                    bool anyFinished = false;
+
+                    for (int i = 0; i < orPrerequisites.Count; i++)
+                    {
+                        if (orPrerequisites[i].IsFinished)
+                        {
+                            anyFinished = true;
+                            break;
+                        }
+                    }
+
+                    if (!anyFinished)
+                    {
+                        __result = false;
+                        return;
+                    }
+                }
+                if (orHiddenPrerequisites != null && orHiddenPrerequisites.Count > 0)
+                {
+                    bool anyFinished = false;
+
+                    for (int i = 0; i < orHiddenPrerequisites.Count; i++)
+                    {
+                        if (orHiddenPrerequisites[i].IsFinished)
+                        {
+                            anyFinished = true;
+                            break;
+                        }
+                    }
+
+                    if (!anyFinished)
+                    {
+                        __result = false;
+                        return;
+                    }
+                }
+            }
         }
     }
 }

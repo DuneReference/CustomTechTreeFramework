@@ -81,6 +81,7 @@
     <Compile Include="HarmonyPatches\Vanilla.cs" />
     <Compile Include="HarmonyPatches\Common.cs" />
     <Compile Include="HarmonyPatches\_HP_Startup.cs" />
+    <Compile Include="ModExtensions\OrPrerequisites.cs" />
     <Compile Include="ModExtensions\ResearchUnlocks.cs" />
     <Compile Include="ModExtensions\HiddenTab.cs" />
     <Compile Include="Startup.cs" />
