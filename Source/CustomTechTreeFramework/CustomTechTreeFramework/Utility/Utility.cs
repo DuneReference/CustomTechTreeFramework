@@ -10,6 +10,12 @@ namespace DuneRef_CustomTechTreeFramework
         // Until I find a reason not to, I've removed all the standard researches from being added.
         public static List<Def> GetUnlocksForResearch(ResearchProjectDef proj)
         {
+            bool hasCarpet = false;
+            bool hasFineCarpet = false;
+            bool hasMindbendCarpet = false;
+            bool hasHexCarpet = false;
+            bool hasMorbidCarpet = false;
+
             return DefDatabase<RecipeDef>.AllDefs.Where(x =>
             {
                 bool found = false;
@@ -115,6 +121,83 @@ namespace DuneRef_CustomTechTreeFramework
                                     found = x.researchPrerequisites != null &&
                                             x.researchPrerequisites.Contains(unlock);
                                     if (found) break;
+                                }
+                            }
+                        }
+
+                        if (found)
+                        {
+                            if (x.defName.ToLower().Contains("carpet"))
+                            {
+                                bool foundCarpetType = false;
+
+                                if (x.defName.ToLower().Contains("morbid"))
+                                {
+                                    if (!hasMorbidCarpet)
+                                    {
+                                        hasMorbidCarpet = true;
+                                    } else
+                                    {
+                                        found = false;
+                                    }
+
+                                    foundCarpetType = true;
+                                }
+
+                                if (!foundCarpetType && x.defName.ToLower().Contains("transhumanist"))
+                                {
+                                    if (!hasHexCarpet)
+                                    {
+                                        hasHexCarpet = true;
+                                    }
+                                    else
+                                    {
+                                        found = false;
+                                    }
+
+                                    foundCarpetType = true;
+                                }
+
+                                if (!foundCarpetType && x.defName.ToLower().Contains("mindbend"))
+                                {
+                                    if (!hasMindbendCarpet)
+                                    {
+                                        hasMindbendCarpet = true;
+                                    }
+                                    else
+                                    {
+                                        found = false;
+                                    }
+
+                                    foundCarpetType = true;
+                                }
+
+                                if (!foundCarpetType && x.defName.ToLower().Contains("fine"))
+                                {
+                                    if (!hasFineCarpet)
+                                    {
+                                        hasFineCarpet = true;
+                                    }
+                                    else
+                                    {
+                                        found = false;
+                                    }
+
+                                    foundCarpetType = true;
+                                }
+
+                                if (!foundCarpetType)
+                                {
+                                    if (!hasCarpet)
+                                    {
+                                        hasCarpet = true;
+                                    }
+                                    else
+                                    {
+                                        found = false;
+                                    }
+
+                                    foundCarpetType = true;
                                 }
                             }
                         }
