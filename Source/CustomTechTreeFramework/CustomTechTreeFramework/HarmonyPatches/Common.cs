@@ -17,9 +17,11 @@ namespace DuneRef_CustomTechTreeFramework
             if (!proj.IsFinished)
                 return;
 
-            if (proj.GetModExtension<ResearchUnlocks>() != null)
+            ResearchUnlocks projResearchUnlocks = proj.GetModExtension<ResearchUnlocks>();
+
+            if (projResearchUnlocks != null)
             {
-                foreach (ResearchProjectDef unlock in proj.GetModExtension<ResearchUnlocks>().researchUnlocks)
+                foreach (ResearchProjectDef unlock in projResearchUnlocks.researchUnlocks)
                 {
                     List<ResearchProjectDef> researchDefs = DefDatabase<ResearchProjectDef>.AllDefsListForReading
                                                             .Where(x => x.tab != CustomTechTreeFramework_DefOf.DuneRef_Hidden)
@@ -29,10 +31,12 @@ namespace DuneRef_CustomTechTreeFramework
 
                     foreach (ResearchProjectDef researchDef in researchDefs)
                     {
+                        ResearchUnlocks researchDefResearchUnlocks = researchDef.GetModExtension<ResearchUnlocks>();
+
                         if (researchDef != proj &&
                             !researchDef.IsFinished &&
-                            researchDef.GetModExtension<ResearchUnlocks>() != null &&
-                            researchDef.GetModExtension<ResearchUnlocks>().researchUnlocks.Contains(unlock))
+                            researchDefResearchUnlocks != null &&
+                            researchDefResearchUnlocks.researchUnlocks.Contains(unlock))
                         {
                             notFinished = true;
                         }
@@ -41,6 +45,17 @@ namespace DuneRef_CustomTechTreeFramework
                     if (!notFinished)
                     {
                         Find.ResearchManager.FinishProject(unlock);
+                    }
+                }
+            }
+
+            if (proj.hiddenPrerequisites != null)
+            {
+                for (int i = 0; i < proj.hiddenPrerequisites.Count; i++)
+                {
+                    if (!proj.hiddenPrerequisites[i].IsFinished)
+                    {
+                        Find.ResearchManager.FinishProject(proj.hiddenPrerequisites[i]);
                     }
                 }
             }
