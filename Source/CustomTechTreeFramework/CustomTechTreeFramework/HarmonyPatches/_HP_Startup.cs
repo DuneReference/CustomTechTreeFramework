@@ -31,6 +31,17 @@ namespace DuneRef_CustomTechTreeFramework
                 SemiRandomResearchPatches.Patches();
             }
 
+            if (ModLister.HasActiveModWithName("Combat Extended"))
+            {
+                if (ModLister.HasActiveModWithName("Vanilla Expanded Framework"))
+                {
+                    CombatExtendedPatches.Patches();
+                } else
+                {
+                    Log.Message("CE Recipe Integration Patch skipped because Vanilla Expanded Framework is required and was not found.");
+                }
+            }
+
             if (CustomTechTreeFrameworkSettings.removeCostFactor)
             {
                 VanillaPatches.CostFactorPatch();

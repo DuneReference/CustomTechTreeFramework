@@ -47,8 +47,16 @@
       <HintPath>..\..\..\..\2879094186\1.4\Assemblies\CM_Semi_Random_Research.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="CombatExtended">
+      <HintPath>..\..\..\..\2890901044\Assemblies\CombatExtended.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="DubsMintMenus">
       <HintPath>..\..\..\..\1446523594\1.4\Assemblies\DubsMintMenus.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RecipeInheritance">
+      <HintPath>..\..\..\..\2023507013\1.4\Assemblies\RecipeInheritance.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ResearchPowl">
@@ -77,6 +85,7 @@
     <Compile Include="CustomTechTreeFramework_DefOf.cs" />
     <Compile Include="HarmonyPatches\DubsMintMenus.cs" />
     <Compile Include="HarmonyPatches\ResearchPowl.cs" />
+    <Compile Include="HarmonyPatches\CombatExtended.cs" />
     <Compile Include="HarmonyPatches\SemiRandomResearch.cs" />
     <Compile Include="HarmonyPatches\Vanilla.cs" />
     <Compile Include="HarmonyPatches\Common.cs" />
@@ -93,7 +102,9 @@
     <PackageReference Include="Krafs.Publicizer" Version="1.0.2" />
     <Publicize Include="Assembly-CSharp" />
     <Publicize Include="ResearchPowl" />
+    <Publicize Include="CombatExtended" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
