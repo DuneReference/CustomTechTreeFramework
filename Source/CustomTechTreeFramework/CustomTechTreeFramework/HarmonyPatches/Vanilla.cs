@@ -9,14 +9,14 @@ namespace DuneRef_CustomTechTreeFramework
 {
     public static class VanillaPatches
     {
-        public static readonly Type patchType = typeof(VanillaPatches);
+        public static readonly Type PatchType = typeof(VanillaPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
-        public static bool costFactorPatched = false;
+        public static bool CostFactorPatched = false;
 
         public static void ExclusivePatches()
         {
             // Finish linked projects
-            Harm.Patch(AccessTools.Method(typeof(ResearchManager), "FinishProject"), postfix: new HarmonyMethod(CommonPatches.patchType, nameof(CommonPatches.FinishProjectOmniFix)));
+            Harm.Patch(AccessTools.Method(typeof(ResearchManager), "FinishProject"), postfix: new HarmonyMethod(CommonPatches.PatchType, nameof(CommonPatches.FinishProjectOmniFix)));
         }
 
         public static void Patches()
@@ -25,32 +25,32 @@ namespace DuneRef_CustomTechTreeFramework
             Harm.Patch(AccessTools.PropertyGetter(typeof(ResearchProjectDef), nameof(ResearchProjectDef.UnlockedDefs)), prefix: new HarmonyMethod(typeof(VanillaPatches), nameof(UnlockedDefsPrefix)));
 
             // Hide projects that I designate for hiding.
-            Harm.Patch(AccessTools.Method(typeof(MainTabWindow_Research), nameof(MainTabWindow_Research.PostOpen)), postfix: new HarmonyMethod(patchType, nameof(PostOpenPostfix)));
+            Harm.Patch(AccessTools.Method(typeof(MainTabWindow_Research), nameof(MainTabWindow_Research.PostOpen)), postfix: new HarmonyMethod(PatchType, nameof(PostOpenPostfix)));
 
             // Add functionality for OR Prerequisites
-            Harm.Patch(AccessTools.PropertyGetter(typeof(ResearchProjectDef), nameof(ResearchProjectDef.PrerequisitesCompleted)), postfix: new HarmonyMethod(patchType, nameof(AddOrPrerequisites)));
+            Harm.Patch(AccessTools.PropertyGetter(typeof(ResearchProjectDef), nameof(ResearchProjectDef.PrerequisitesCompleted)), postfix: new HarmonyMethod(PatchType, nameof(AddOrPrerequisites)));
         }
 
         public static void CostFactorPatch()
         {
             // Remove CostFactor adjustments 
-            Harm.Patch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), postfix: new HarmonyMethod(patchType, nameof(CostFactorPostfix)));
-            costFactorPatched = true;
+            Harm.Patch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), postfix: new HarmonyMethod(PatchType, nameof(CostFactorPostfix)));
+            CostFactorPatched = true;
         }
 
         public static void CostFactorUnpatch()
         {
-            Harm.Unpatch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), AccessTools.Method(patchType, nameof(CostFactorPostfix)));
-            costFactorPatched = false;
+            Harm.Unpatch(AccessTools.Method(typeof(ResearchProjectDef), nameof(ResearchProjectDef.CostFactor)), AccessTools.Method(PatchType, nameof(CostFactorPostfix)));
+            CostFactorPatched = false;
         }
 
         public static void UpdateCostFactorPatch()
         {
-            if (costFactorPatched && !CustomTechTreeFrameworkSettings.removeCostFactor)
+            if (CostFactorPatched && !CustomTechTreeFrameworkSettings.RemoveCostFactor)
             {
                 CostFactorUnpatch();
             }
-            else if (!costFactorPatched && CustomTechTreeFrameworkSettings.removeCostFactor)
+            else if (!CostFactorPatched && CustomTechTreeFrameworkSettings.RemoveCostFactor)
             {
                 CostFactorPatch();
             }
@@ -72,7 +72,7 @@ namespace DuneRef_CustomTechTreeFramework
         {
             __instance.tabs.Clear();
 
-            foreach (ResearchTabDef tabDef in DefDatabase<ResearchTabDef>.AllDefs)
+            foreach (var tabDef in DefDatabase<ResearchTabDef>.AllDefs)
             {
                 if (tabDef.GetModExtension<HiddenTab>() == null || tabDef.GetModExtension<HiddenTab>().hidden == false)
                 {
@@ -89,49 +89,49 @@ namespace DuneRef_CustomTechTreeFramework
         public static void AddOrPrerequisites(ref bool __result, ResearchProjectDef __instance)
         {
             if (__result)
+                return;
+
+            var orPrerequisitesModExtension = __instance.GetModExtension<OrPrerequisites>();
+            var orPrerequisites = orPrerequisitesModExtension?.orPrerequisites;
+            var orHiddenPrerequisites = orPrerequisitesModExtension?.orHiddenPrerequisites;
+
+            var anyFinished = false;
+
+            if (orPrerequisites?.Count > 0)
             {
-                OrPrerequisites orPrerequisitesModExtension = __instance.GetModExtension<OrPrerequisites>();
-                List<ResearchProjectDef> orPrerequisites = orPrerequisitesModExtension?.orPrerequisites;
-                List<ResearchProjectDef> orHiddenPrerequisites = orPrerequisitesModExtension?.orHiddenPrerequisites;
-
-                if (orPrerequisites != null && orPrerequisites.Count > 0)
+                foreach(var orPrerequisite in orPrerequisites)
                 {
-                    bool anyFinished = false;
-
-                    for (int i = 0; i < orPrerequisites.Count; i++)
+                    if (orPrerequisite.IsFinished)
                     {
-                        if (orPrerequisites[i].IsFinished)
-                        {
-                            anyFinished = true;
-                            break;
-                        }
-                    }
-
-                    if (!anyFinished)
-                    {
-                        __result = false;
-                        return;
+                        anyFinished = true;
+                        break;
                     }
                 }
-                if (orHiddenPrerequisites != null && orHiddenPrerequisites.Count > 0)
+
+                if (!anyFinished)
                 {
-                    bool anyFinished = false;
-
-                    for (int i = 0; i < orHiddenPrerequisites.Count; i++)
-                    {
-                        if (orHiddenPrerequisites[i].IsFinished)
-                        {
-                            anyFinished = true;
-                            break;
-                        }
-                    }
-
-                    if (!anyFinished)
-                    {
-                        __result = false;
-                        return;
-                    }
+                    __result = false;
+                    return;
                 }
+            }
+
+            if (orHiddenPrerequisites == null || orHiddenPrerequisites.Count <= 0)
+                return;
+
+            anyFinished = false;
+
+            foreach (var orHiddenPrerequisite in orHiddenPrerequisites)
+            {
+                if (orHiddenPrerequisite.IsFinished)
+                {
+                    anyFinished = true;
+                    break;
+                }
+            }
+
+            if (!anyFinished)
+            {
+                __result = false;
             }
         }
     }

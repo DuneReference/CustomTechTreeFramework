@@ -42,7 +42,7 @@ namespace DuneRef_CustomTechTreeFramework
                 }
             }
 
-            if (CustomTechTreeFrameworkSettings.removeCostFactor)
+            if (CustomTechTreeFrameworkSettings.RemoveCostFactor)
             {
                 VanillaPatches.CostFactorPatch();
             }

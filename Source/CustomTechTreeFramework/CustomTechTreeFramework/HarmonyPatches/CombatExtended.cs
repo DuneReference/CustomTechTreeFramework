@@ -7,13 +7,13 @@ namespace DuneRef_CustomTechTreeFramework
 {
     public static class CombatExtendedPatches
     {
-        public static readonly Type patchType = typeof(CombatExtendedPatches);
+        public static readonly Type PatchType = typeof(CombatExtendedPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
 
         public static void Patches()
         {
             // Do recipe Inheritance for workbenches after CE ammo additions.
-            Harm.Patch(AccessTools.Method(typeof(CombatExtended.AmmoInjector), "Inject"), postfix: new HarmonyMethod(patchType, nameof(AddRecipesPostfix)));
+            Harm.Patch(AccessTools.Method(typeof(CombatExtended.AmmoInjector), "Inject"), postfix: new HarmonyMethod(PatchType, nameof(AddRecipesPostfix)));
         }
 
         public static void AddRecipesPostfix()

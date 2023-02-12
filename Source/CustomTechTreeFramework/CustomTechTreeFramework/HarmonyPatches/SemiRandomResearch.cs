@@ -3,27 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
-using Mono.Cecil;
 using Verse;
 
 namespace DuneRef_CustomTechTreeFramework
 {
     public static class SemiRandomResearchPatches
     {
-        public static readonly Type patchType = typeof(SemiRandomResearchPatches);
+        public static readonly Type PatchType = typeof(SemiRandomResearchPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
 
         public static void Patches()
         {
             // Hide projects that I designate for hiding.
-            Harm.Patch(AccessTools.Method(typeof(CM_Semi_Random_Research.ResearchTracker), "GetResearchableProjects"), transpiler: new HarmonyMethod(patchType, nameof(GetResearchableProjectsTranspiler)));
+            Harm.Patch(AccessTools.Method(typeof(CM_Semi_Random_Research.ResearchTracker), "GetResearchableProjects"), transpiler: new HarmonyMethod(PatchType, nameof(GetResearchableProjectsTranspiler)));
         }
         
         public static IEnumerable<CodeInstruction> GetResearchableProjectsTranspiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             try
             {
-                CodeMatch[] hideResearchDefsInstructions = new CodeMatch[]{
+                var hideResearchDefsInstructions = new CodeMatch[]{
                     // IL_0080: call class [mscorlib]System.Collections.Generic.List`1<!0> class ['Assembly-CSharp']Verse.DefDatabase`1<class ['Assembly-CSharp']Verse.ResearchProjectDef>::get_AllDefsListForReading()
                     new CodeMatch(i => i.opcode == OpCodes.Call),
                     // IL_0085: ldarg.0     // V_0
@@ -45,7 +44,7 @@ namespace DuneRef_CustomTechTreeFramework
                     .MatchStartForward(hideResearchDefsInstructions)
                     .Advance(1)
                     .ThrowIfInvalid("Couldn't find the hideResearchDefsInstructions instructions")
-                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(patchType, nameof(SemiRandomResearchPatches.CullHiddenResearch))))
+                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(PatchType, nameof(SemiRandomResearchPatches.CullHiddenResearch))))
                     .InstructionEnumeration();
             }
             catch (Exception ex)

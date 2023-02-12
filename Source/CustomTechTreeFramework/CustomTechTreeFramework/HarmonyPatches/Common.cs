@@ -3,13 +3,12 @@
 using Verse;
 using HarmonyLib;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace DuneRef_CustomTechTreeFramework
 {
     public static class CommonPatches
     {
-        public static readonly Type patchType = typeof(CommonPatches);
+        public static readonly Type PatchType = typeof(CommonPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
 
         public static void FinishProjectOmniFix(ResearchProjectDef proj)
@@ -17,21 +16,21 @@ namespace DuneRef_CustomTechTreeFramework
             if (!proj.IsFinished)
                 return;
 
-            ResearchUnlocks projResearchUnlocks = proj.GetModExtension<ResearchUnlocks>();
+            var projResearchUnlocks = proj.GetModExtension<ResearchUnlocks>();
 
             if (projResearchUnlocks != null)
             {
-                foreach (ResearchProjectDef unlock in projResearchUnlocks.researchUnlocks)
+                foreach (var unlock in projResearchUnlocks.researchUnlocks)
                 {
-                    List<ResearchProjectDef> researchDefs = DefDatabase<ResearchProjectDef>.AllDefsListForReading
+                    var researchDefs = DefDatabase<ResearchProjectDef>.AllDefsListForReading
                                                             .Where(x => x.tab != CustomTechTreeFramework_DefOf.DuneRef_Hidden)
                                                             .ToList();
 
-                    bool notFinished = false;
+                    var notFinished = false;
 
-                    foreach (ResearchProjectDef researchDef in researchDefs)
+                    foreach (var researchDef in researchDefs)
                     {
-                        ResearchUnlocks researchDefResearchUnlocks = researchDef.GetModExtension<ResearchUnlocks>();
+                        var researchDefResearchUnlocks = researchDef.GetModExtension<ResearchUnlocks>();
 
                         if (researchDef != proj &&
                             !researchDef.IsFinished &&
@@ -49,14 +48,14 @@ namespace DuneRef_CustomTechTreeFramework
                 }
             }
 
-            if (proj.hiddenPrerequisites != null)
+            if (proj.hiddenPrerequisites == null)
+                return;
+
+            foreach(var hiddenPrerequisite in proj.hiddenPrerequisites)
             {
-                for (int i = 0; i < proj.hiddenPrerequisites.Count; i++)
+                if (!hiddenPrerequisite.IsFinished)
                 {
-                    if (!proj.hiddenPrerequisites[i].IsFinished)
-                    {
-                        Find.ResearchManager.FinishProject(proj.hiddenPrerequisites[i]);
-                    }
+                    Find.ResearchManager.FinishProject(hiddenPrerequisite);
                 }
             }
         }

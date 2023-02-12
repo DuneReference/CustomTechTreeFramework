@@ -2,7 +2,6 @@
 
 using Verse;
 using HarmonyLib;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using ResearchPowl;
@@ -11,16 +10,16 @@ namespace DuneRef_CustomTechTreeFramework
 {
     public static class ResearchPowlPatches
     {
-        public static readonly Type patchType = typeof(ResearchPowlPatches);
+        public static readonly Type PatchType = typeof(ResearchPowlPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
 
         public static void Patches()
         {
             // Finish linked projects
-            Harm.Patch(AccessTools.Method(typeof(ResearchPowl.DoCompletionDialog), "Postfix"), prefix: new HarmonyMethod(CommonPatches.patchType, nameof(CommonPatches.FinishProjectOmniFix)));
+            Harm.Patch(AccessTools.Method(typeof(ResearchPowl.DoCompletionDialog), "Postfix"), prefix: new HarmonyMethod(CommonPatches.PatchType, nameof(CommonPatches.FinishProjectOmniFix)));
 
             // Show icons of linked projects for my projects 
-            MethodInfo GetUnlockDefsInnerMethod = AccessTools.FindIncludingInnerTypes(
+            var GetUnlockDefsInnerMethod = AccessTools.FindIncludingInnerTypes(
                 typeof(ResearchPowl.ResearchNode),
                 (type) => AccessTools.FirstMethod(
                     type,
@@ -30,10 +29,10 @@ namespace DuneRef_CustomTechTreeFramework
                                 method.GetParameters()[0].ParameterType == typeof(ResearchProjectDef)
                 )
             );
-            Harm.Patch(GetUnlockDefsInnerMethod, prefix: new HarmonyMethod(patchType, nameof(GetUnlockDefsPrefix)));
+            Harm.Patch(GetUnlockDefsInnerMethod, prefix: new HarmonyMethod(PatchType, nameof(GetUnlockDefsPrefix)));
 
             // Hide projects that I designate for hiding.
-            MethodInfo populateNodesInnerMethod = AccessTools.FindIncludingInnerTypes(
+            var populateNodesInnerMethod = AccessTools.FindIncludingInnerTypes(
                 typeof(ResearchPowl.Tree),
                 (type) => AccessTools.FirstMethod(
                     type,
@@ -43,7 +42,7 @@ namespace DuneRef_CustomTechTreeFramework
                                 method.GetParameters()[0].ParameterType == typeof(ResearchProjectDef)
                 )
             );
-            Harm.Patch(populateNodesInnerMethod, postfix: new HarmonyMethod(patchType, nameof(ResearchPowlTreePopulateNodesHiddenPostfix)));
+            Harm.Patch(populateNodesInnerMethod, postfix: new HarmonyMethod(PatchType, nameof(ResearchPowlTreePopulateNodesHiddenPostfix)));
         }
         
         public static bool GetUnlockDefsPrefix(ref List<Def> __result, ResearchProjectDef research, ref Dictionary<Def, List<Def>> ____unlocksCache)

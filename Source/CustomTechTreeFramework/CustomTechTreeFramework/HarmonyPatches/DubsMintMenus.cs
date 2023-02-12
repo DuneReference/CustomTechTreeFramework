@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
-using DubsMintMenus;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -12,28 +10,28 @@ namespace DuneRef_CustomTechTreeFramework
 {
     public static class DubsMintMenusPatches
     {
-        public static readonly Type patchType = typeof(DubsMintMenusPatches);
+        public static readonly Type PatchType = typeof(DubsMintMenusPatches);
         public static Harmony Harm = HarmonyPatches.Harm;
 
         public static void Patches()
         {
             // Finish linked projects
-            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.HarmonyPatches.Patch_FinishProject), "Postfix"), prefix: new HarmonyMethod(CommonPatches.patchType, nameof(CommonPatches.FinishProjectOmniFix)));
+            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.HarmonyPatches.Patch_FinishProject), "Postfix"), prefix: new HarmonyMethod(CommonPatches.PatchType, nameof(CommonPatches.FinishProjectOmniFix)));
 
             // Show icons of linked projects for my projects 
-            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), nameof(DubsMintMenus.MainTabWindow_MintResearch.AllUnlockedBy)), prefix: new HarmonyMethod(patchType, nameof(AllUnlockedByPrefix)));
+            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), nameof(DubsMintMenus.MainTabWindow_MintResearch.AllUnlockedBy)), prefix: new HarmonyMethod(PatchType, nameof(AllUnlockedByPrefix)));
 
             // Hide projects that I designate for hiding.
-            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), nameof(DubsMintMenus.MainTabWindow_MintResearch.AllProjectsForTab)), prefix: new HarmonyMethod(patchType, nameof(AllProjectsForTabPrefix)));
-            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), "DrawModsList"), transpiler: new HarmonyMethod(patchType, nameof(DrawModsListTranspiler)));
-            Harm.Patch(AccessTools.PropertyGetter(typeof(DubsMintMenus.MainTabWindow_MintResearch), "ProjectsAvailable"), prefix: new HarmonyMethod(patchType, nameof(ProjectsAvailablePrefix)));
+            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), nameof(DubsMintMenus.MainTabWindow_MintResearch.AllProjectsForTab)), prefix: new HarmonyMethod(PatchType, nameof(AllProjectsForTabPrefix)));
+            Harm.Patch(AccessTools.Method(typeof(DubsMintMenus.MainTabWindow_MintResearch), "DrawModsList"), transpiler: new HarmonyMethod(PatchType, nameof(DrawModsListTranspiler)));
+            Harm.Patch(AccessTools.PropertyGetter(typeof(DubsMintMenus.MainTabWindow_MintResearch), "ProjectsAvailable"), prefix: new HarmonyMethod(PatchType, nameof(ProjectsAvailablePrefix)));
         }
 
         public static bool AllUnlockedByPrefix(ref List<Def> __result, ResearchProjectDef proj, ref Dictionary<ResearchProjectDef, List<Def>> ___CachedUnlocks)
         {
             if (!___CachedUnlocks.TryGetValue(proj, out _))
             {
-                List<Def> unlocks = Utility.GetUnlocksForResearch(proj);
+                var unlocks = Utility.GetUnlocksForResearch(proj);
 
                 ___CachedUnlocks.Add(proj, unlocks);
             }
@@ -59,7 +57,7 @@ namespace DuneRef_CustomTechTreeFramework
         {
             try
             {
-                CodeMatch[] tabDefsListGeneration = new CodeMatch[]{
+                var tabDefsListGeneration = new CodeMatch[]{
                     // IL_005b: starg.s      'box'
                     new CodeMatch(i => i.opcode == OpCodes.Starg_S),
                     // IL_005d: call         class [mscorlib]System.Collections.Generic.List`1<!0/*class ['Assembly-CSharp']RimWorld.ResearchTabDef*/> class ['Assembly-CSharp']Verse.DefDatabase`1<class ['Assembly-CSharp']RimWorld.ResearchTabDef>::get_AllDefsListForReading()
@@ -68,7 +66,7 @@ namespace DuneRef_CustomTechTreeFramework
                     new CodeMatch(i => i.opcode == OpCodes.Stloc_0),
                 };
 
-                CodeMatch[] AllTabRemovalLines = new CodeMatch[]{
+                var allTabRemovalLines = new CodeMatch[]{
                     // [334 7 - 334 81]
                     // IL_00f0: ldarg.0      // this
                     new CodeMatch(i => i.opcode == OpCodes.Ldarg_0),
@@ -105,10 +103,10 @@ namespace DuneRef_CustomTechTreeFramework
                     .MatchStartForward(tabDefsListGeneration)
                     .ThrowIfInvalid("Couldn't find the tabDefsListGeneration instructions")
                     .Advance(2)
-                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(patchType, nameof(DubsMintMenusPatches.CullHiddenTab))))
-                    .MatchStartForward(AllTabRemovalLines)
+                    .Insert(new CodeInstruction(OpCodes.Call, AccessTools.Method(PatchType, nameof(DubsMintMenusPatches.CullHiddenTab))))
+                    .MatchStartForward(allTabRemovalLines)
                     .ThrowIfInvalid("Couldn't find the AllTabRemovalLines instructions")
-                    .RemoveInstructions(AllTabRemovalLines.Count())
+                    .RemoveInstructions(allTabRemovalLines.Count())
                     .InstructionEnumeration();
             }
             catch (Exception ex)
@@ -125,7 +123,7 @@ namespace DuneRef_CustomTechTreeFramework
 
         public static bool ProjectsAvailablePrefix(ref List<ResearchProjectDef> __result, object __instance)
         {
-            MethodInfo Parc = AccessTools.Method(__instance.GetType(), "parc");
+            var Parc = AccessTools.Method(__instance.GetType(), "parc");
 
             __result = DefDatabase<ResearchProjectDef>.AllDefsListForReading
                 .Where(x => x.tab != CustomTechTreeFramework_DefOf.DuneRef_Hidden)
